@@ -11,7 +11,7 @@ class Reply extends Model
 
     public function tweep()
     {
-        return $this->belongsTo(User::class, 'userId');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function tweet()

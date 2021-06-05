@@ -26,4 +26,9 @@ class Tweet extends Model
     {
         return $this->hasMany(Reply::class, 'reply_id');
     }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 }

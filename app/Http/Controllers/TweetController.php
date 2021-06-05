@@ -12,6 +12,31 @@ use Illuminate\Support\Str;
 
 class TweetController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $tweets = Tweet::with('tweep')->get();
+        if ($tweets->has('replies')) {
+            $tweets_replies = Tweet::with('tweep', 'replies')->get();
+            return $tweets_replies;
+        }
+
+        if ($tweets->count() > 0) {
+            return $tweets;
+        }
+        return 'No tweets found';
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function createTweet(Request $request)
     {
         $validateTweet = $this->tweet_rules($request);
@@ -29,7 +54,7 @@ class TweetController extends Controller
 
         $tweet->user_id = Auth::user()->id;
         $tweet->tweet_text = $request->tweet_text;
-        $tweet->slug = Str::slug($request->tweet_text);
+        $tweet->slug = Str::slug($request->tweet_text, '-');
 
         if ($request->hasFile('tweet_photo')) {
             $validateTweetPhoto = $this->tweet_photo_rules($request);
@@ -105,5 +130,76 @@ class TweetController extends Controller
         return Validator::make($request->all(), [
             'tweet_photo' => 'required|file|max:5120',
         ]);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showTweet(Tweet $tweet)
+    {
+        return $tweet;
+    }
+
+    /**
+     * Reply the specified tweet.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function replyTweet(Tweet $tweet)
+    {
+        return $tweet;
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Tweet $tweet)
+    {
+        // dd($tweet->tweet_photo);
+        try {
+            // if ($tweet->has('tweet_photo')) {
+            //     Storage::delete('/public/tweets/photos' . $tweet->tweet_photo);
+            // }
+            if ($tweet->has('replies')) {
+                foreach ($tweet->replies as $tweetR) {
+                    $tweetR->delete();
+                }
+                // $tweet->with('replies')->delete();
+            }
+            $tweet->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Tweet Deleted',
+                'status' => 200,
+
+            ]);
+        } catch (\Throwable $th) {
+            Log::error($th);
+            return response()->json([
+                'success' => false,
+                'status' => 500,
+                'message' => 'Oops! Something went wrong. Try Again!',
+            ]);
+        }
     }
 }

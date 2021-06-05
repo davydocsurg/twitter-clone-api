@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -28,6 +29,38 @@ class AuthController extends Controller
 
         // dd('validation');
         $user = new User();
+
+        if ($request->hasFile('profile_picture')) {
+            // $old=$user->profile_picture;
+            $validateProfilePicture = $this->profile_picture_rules($request);
+
+            // Run validation
+            if ($validateProfilePicture->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validateProfilePicture->errors(),
+                    'status' => 400,
+                ]);
+            }
+
+            $uploadPhoto = Storage::put('/public/users/profile', $request->profile_picture);
+
+            $profilePicture = basename($uploadPhoto);
+
+            $user->profile_picture = $profilePicture;
+
+            if (!$uploadPhoto) {
+                // Storage::delete('/public/users/profile' . $profilePicture);
+                $profilePicture != 'avatar.png' ? Storage::delete('/public/users/profile/' . $profilePicture) : null;
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Oops! Something went wrong. Try Again!',
+                    'status' => 400,
+                ]);
+            }
+
+        }
 
         // $user = User::create([
         $user->first_name = $request->first_name; //$fields['first_name'],
@@ -51,6 +84,7 @@ class AuthController extends Controller
                 'access_token' => $token,
             ]);
         } catch (\Throwable $th) {
+            $profilePicture != 'avatar.png' ? Storage::delete('/public/users/profile/' . $profilePicture) : null;
             Log::error($th);
             return response()->json([
                 'success' => false,
@@ -75,6 +109,20 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users,email',
             'handle' => 'required|string|min:4|max:15|unique:users,handle',
             'password' => 'required|min:8|max:30|string|confirmed',
+        ]);
+    }
+
+    /**
+     * Get a validator for an incoming request.
+     *
+     * @param  request  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    public function profile_picture_rules(Request $request)
+    {
+        // Make and return validation rules
+        return Validator::make($request->all(), [
+            'profile_picture' => 'required|file|max:5120',
         ]);
     }
 
@@ -146,26 +194,51 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::user()->tokens->each(function ($token, $key) {
-            $token->delete();
-        });
+        try {
 
-        //return $request->Authorization;
-        // $token = $request->user()->token();
-        //return $token;
-        // $token->revoke();
-        // Auth::user()->token()->delete();
-        // $user = $request->user();
+            Auth::user()->token()->delete();
 
-        // foreach ($user->tokens as $token) {
-        //     $token->revoke();
-        // }
+            // Auth::user()->tokens->each(function ($token, $key) {
+            //     $token->delete();
+            // });
 
-        Auth::logout();
+            Auth::logout();
 
-        return [
-            'message' => 'User logged out successfully',
-        ];
+            return response()->json([
+                'success' => true,
+                'message' => 'User logged out successfully',
+                'status' => 200,
+
+            ]);
+        } catch (\Throwable $th) {
+            Log::error($th);
+            return response()->json([
+                'success' => false,
+                'status' => 500,
+                'message' => 'Oops! Something went wrong. Try Again!',
+            ]);
+        }
+
+        // Auth::user()->tokens->each(function ($token, $key) {
+        //     $token->delete();
+        // });
+
+        // //return $request->Authorization;
+        // // $token = $request->user()->token();
+        // //return $token;
+        // // $token->revoke();
+        // // Auth::user()->token()->delete();
+        // // $user = $request->user();
+
+        // // foreach ($user->tokens as $token) {
+        // //     $token->revoke();
+        // // }
+
+        // Auth::logout();
+
+        // return [
+        //     'message' => 'User logged out successfully',
+        // ];
     }
 
 }
