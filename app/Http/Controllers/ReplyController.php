@@ -132,7 +132,27 @@ class ReplyController extends Controller
      */
     public function show($id)
     {
-        //
+        $reply = Reply::findOrFail($id);
+
+        // try reply delete or catch error(s)
+        try {
+            return $reply->with('tweet', 'tweep')->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Reply Deleted',
+                'status' => 200,
+                'reply' => $reply,
+                // 'access_token' => $token,
+            ]);
+        } catch (\Throwable $th) {
+            Log::error($th);
+            return response()->json([
+                'success' => false,
+                'status' => 500,
+                'message' => 'Oops! Something went wrong. Try Again!',
+            ]);
+        }
     }
 
     /**
@@ -155,6 +175,30 @@ class ReplyController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $reply = Reply::findOrFail($id);
+
+        // try reply delete or catch error(s)
+        try {
+            if ($reply->reply_photo > 0) {
+                unlink(public_path('/storage/replies/photos/' . $reply->reply_photo));
+                // Storage::delete('/public/replies/photos/' . $reply->reply_photo);
+            }
+            $reply->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Reply Deleted',
+                'status' => 200,
+                'reply' => $reply,
+                // 'access_token' => $token,
+            ]);
+        } catch (\Throwable $th) {
+            Log::error($th);
+            return response()->json([
+                'success' => false,
+                'status' => 500,
+                'message' => 'Oops! Something went wrong. Try Again!',
+            ]);
+        }
     }
 }

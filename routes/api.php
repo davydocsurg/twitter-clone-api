@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\TweetController;
 use Illuminate\Http\Request;
@@ -35,9 +36,18 @@ Route::middleware('auth:api')->group(function () {
     // reply routes
     Route::get('replies', [ReplyController::class, 'index']);
     Route::post('reply/{tweet}', [ReplyController::class, 'replyTweet']);
+    Route::get('reply/{id}/show', [ReplyController::class, 'show']);
+    Route::post('reply/{id}/destroy', [ReplyController::class, 'destroy']);
 
     // logout
     Route::post('logout', [AuthController::class, 'logout']);
+
+    // profile
+    Route::get('/{handle}', [ProfileController::class, 'profile']);
+    Route::post('/update-profile', [ProfileController::class, 'updateProfile']);
+    Route::post('/update-profile-picture', [ProfileController::class, 'updateProfilePicture']);
+    Route::post('/update-password', [ProfileController::class, 'updatePassword']);
+
 });
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

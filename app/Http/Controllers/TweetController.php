@@ -19,11 +19,7 @@ class TweetController extends Controller
      */
     public function index()
     {
-        $tweets = Tweet::with('tweep')->get();
-        if ($tweets->has('replies')) {
-            $tweets_replies = Tweet::with('tweep', 'replies')->get();
-            return $tweets_replies;
-        }
+        $tweets = Tweet::with('tweep', 'replies')->get();
 
         if ($tweets->count() > 0) {
             return $tweets;
@@ -140,7 +136,16 @@ class TweetController extends Controller
      */
     public function showTweet(Tweet $tweet)
     {
+        // $tweet = Tweet::findOrFail($tweet);
+        if ($tweet->has('replies')) {
+            // $tweet = Tweet::with('tweep', 'replies')->get();
+            return $tweet->replies;
+            // return $tweet;
+
+        }
+
         return $tweet;
+
     }
 
     /**
@@ -176,22 +181,18 @@ class TweetController extends Controller
     {
         // dd($tweet->tweet_photo);
         try {
-            // if ($tweet->has('tweet_photo')) {
-            //     Storage::delete('/public/tweets/photos' . $tweet->tweet_photo);
-            // }
-            if ($tweet->has('replies')) {
-                foreach ($tweet->replies as $tweetR) {
-                    $tweetR->delete();
-                }
-                // $tweet->with('replies')->delete();
+            if ($tweet->tweet_photo) {
+                unlink(public_path('/storage/tweets/photos/' . $tweet->tweet_photo));
+                // Storage::delete('/public/tweets/photos' . $tweet->tweet_photo);
             }
-            $tweet->delete();
+
+            // $tweet->delete();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Tweet Deleted',
                 'status' => 200,
-
+                'tweet_photo' => $tweet->tweet_photo,
             ]);
         } catch (\Throwable $th) {
             Log::error($th);

@@ -20,6 +20,7 @@ class User extends Authenticatable
         'tweet_id',
         'first_name',
         'last_name',
+        'profile_picture',
         'email',
         'handle',
         'bio',
@@ -50,5 +51,10 @@ class User extends Authenticatable
     public function tweets()
     {
         return $this->hasMany(Tweet::class);
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'handle';
     }
 }
