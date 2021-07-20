@@ -126,7 +126,7 @@ class AuthController extends Controller
         ]);
     }
 
-    public function login(Request $request, User $user)
+    public function login(Request $request)
     {
         // $fields =
         $validate = $this->login_rules($request);
@@ -152,7 +152,7 @@ class AuthController extends Controller
         $attempt = $attempt ? $attempt : Auth::attempt(['handle' => $login, 'password' => $password], $request->remember_me);
 
         // create token for user
-        $token = auth()->user()->createToken('authToken')->accessToken;
+        $token = Auth::user()->createToken('authToken')->accessToken;
 
         // Return response
         if ($attempt) {

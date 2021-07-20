@@ -23,12 +23,13 @@ Route::post('signup', [AuthController::class, 'signUp']);
 Route::post('login', [AuthController::class, 'login'])->name('login');
 
 Route::get('all/tweets', [TweetController::class, 'allTweets']);
+    Route::get('tweets', [TweetController::class, 'index']);
 // protected routes
 // Route::group(['middleware' => ['auth:api']], function () {
 Route::middleware('auth:api')->group(function () {
     // Route::apiResources(['tweets' => TweetController::class]);
     // tweet routes
-    Route::get('tweets', [TweetController::class, 'index']);
+
     Route::post('tweet/create', [TweetController::class, 'createTweet']);
     Route::get('tweets/{tweet}/show', [TweetController::class, 'showTweet']);
     Route::post('tweets/{tweet}/destroy', [TweetController::class, 'destroy']);

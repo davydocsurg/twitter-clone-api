@@ -21,7 +21,7 @@ class CreateTweetsTable extends Migration
             $table->string('tweet_text');
             $table->string('tweet_photo')->nullable();
             $table->string('tweet_video')->nullable();
-            $table->string('slug')->unique();
+            $table->string('slug', 20)->unique();
             $table->timestamps();
         });
     }

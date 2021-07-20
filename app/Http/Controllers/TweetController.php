@@ -50,7 +50,7 @@ class TweetController extends Controller
 
         $tweet->user_id = Auth::user()->id;
         $tweet->tweet_text = $request->tweet_text;
-        $tweet->slug = Str::slug($request->tweet_text, '-');
+        $tweet->slug = Str::slug(time() . '-' . $request->tweet_text);
 
         if ($request->hasFile('tweet_photo')) {
             $validateTweetPhoto = $this->tweet_photo_rules($request);
