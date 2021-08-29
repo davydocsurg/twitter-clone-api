@@ -241,4 +241,8 @@ class AuthController extends Controller
         // ];
     }
 
+    public function getAuthUser()
+    {
+        return Auth::user();
+    }
 }

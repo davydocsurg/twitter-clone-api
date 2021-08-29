@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Intervention\Image\Facades\Image;
 
 class TweetController extends Controller
 {
@@ -19,7 +20,7 @@ class TweetController extends Controller
      */
     public function index()
     {
-        $tweets = Tweet::with('tweep', 'replies')->get();
+        $tweets = Tweet::with('tweep', 'replies')->latest()->get();
 
         if ($tweets->count() > 0) {
             return $tweets;
@@ -50,9 +51,12 @@ class TweetController extends Controller
 
         $tweet->user_id = Auth::user()->id;
         $tweet->tweet_text = $request->tweet_text;
-        $tweet->slug = Str::slug(time() . '-' . $request->tweet_text);
+        $tweet->slug = Str::slug(time() . '-' . substr($request->tweet_text, 0, 3));
 
-        if ($request->hasFile('tweet_photo')) {
+        // if ($request->hasFile('tweet_photo')) {
+        if ($request->tweet_photo) {
+            $uploadPhoto = time() . '.' . explode('/', explode(':', substr($request->tweet_photo, 0, strpos($request->tweet_photo, ';')))[1])[1];
+            // dd($uploadPhoto);
             $validateTweetPhoto = $this->tweet_photo_rules($request);
 
             // Run validation
@@ -64,21 +68,34 @@ class TweetController extends Controller
                 ]);
             }
 
-            $uploadPhoto = Storage::put('/public/tweets/photos', $request->tweet_photo);
+            // $uploadPhoto = basename($request->tweet_photo);
 
-            $tweetPhoto = basename($uploadPhoto);
+            // $madeImg = Image::make($request->tweet_photo);
+            // Storage::put('/pubic/tweets/photos' . $uploadPhoto);
+            // $madeImg->save($storeImg);
+            Image::make($request->tweet_photo)->save('tweets/photos/' . $uploadPhoto);
 
-            $tweet->tweet_photo = $tweetPhoto;
+            $request->merge(['tweet_photo' => $uploadPhoto]);
 
-            if (!$uploadPhoto) {
-                Storage::delete('/public/tweets/photos' . $tweetPhoto);
+            // $uploadPhoto = Storage::put('/public/tweets/photos', $request->tweet_photo);
 
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Oops! Something went wrong. Try Again!',
-                    'status' => 400,
-                ]);
-            }
+            // $tweet->tweet_photo = ('public/tweets/photos/') . $uploadPhoto;
+            $tweet->tweet_photo = $uploadPhoto;
+            // $uploadPhoto = Storage::put('/public/tweets/photos', $request->tweet_photo);
+
+            // $tweetPhoto = basename($uploadPhoto);
+
+            // $tweet->tweet_photo = $tweetPhoto;
+
+            // if (!$uploadPhoto) {
+            //     Storage::delete('/public/tweets/photos' . $uploadPhoto);
+
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Oops! Something went wrong. Try Again!',
+            //         'status' => 400,
+            //     ]);
+            // }
         }
 
         // try tweet save or catch error(s)
@@ -110,7 +127,7 @@ class TweetController extends Controller
     {
         // Make and return validation rules
         return Validator::make($request->all(), [
-            'tweet_text' => 'required|string',
+            'tweet_text' => 'required|string|max:250',
         ]);
     }
 
@@ -124,7 +141,8 @@ class TweetController extends Controller
     {
         // Make and return validation rules
         return Validator::make($request->all(), [
-            'tweet_photo' => 'required|file|max:5120',
+            'tweet_photo' => 'required',
+            // 'tweet_photo' => 'required|file|max:5120',
         ]);
     }
 

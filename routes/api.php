@@ -20,10 +20,10 @@ use Illuminate\Support\Facades\Route;
 
 //  guest routes
 Route::post('signup', [AuthController::class, 'signUp']);
-Route::post('login', [AuthController::class, 'login'])->name('login');
+Route::post('signin', [AuthController::class, 'login'])->name('login');
 
-Route::get('all/tweets', [TweetController::class, 'allTweets']);
-    Route::get('tweets', [TweetController::class, 'index']);
+// Route::get('all/tweets', [TweetController::class, 'allTweets']);
+Route::get('tweets', [TweetController::class, 'index']);
 // protected routes
 // Route::group(['middleware' => ['auth:api']], function () {
 Route::middleware('auth:api')->group(function () {
@@ -41,7 +41,10 @@ Route::middleware('auth:api')->group(function () {
     Route::post('reply/{id}/destroy', [ReplyController::class, 'destroy']);
 
     // logout
-    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('signout', [AuthController::class, 'logout']);
+
+    // logout
+    Route::get('authUser', [AuthController::class, 'getAuthUser']);
 
     // profile
     Route::get('/{handle}', [ProfileController::class, 'profile']);
