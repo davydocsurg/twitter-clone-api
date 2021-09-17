@@ -243,6 +243,29 @@ class AuthController extends Controller
 
     public function getAuthUser()
     {
-        return Auth::user();
+        $authUser = Auth::user();
+        $authUserTweets = auth()->user()->tweets()->get();
+        $authUserTweetsCount = auth()->user()->tweets()->count();
+
+        try {
+            // return $authUser->with($authUserTweets)->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User Profile',
+                'status' => 200,
+                'credentials' => $authUser,
+                'authUserTweets' => $authUserTweets,
+                'authUserTweetsCount' => $authUserTweetsCount,
+            ]);
+        } catch (\Throwable $th) {
+            Log::error($th);
+            return response()->json([
+                'success' => false,
+                'status' => 500,
+                'message' => 'Oops! Something went wrong. Try Again!',
+            ]);
+        }
+
     }
 }
