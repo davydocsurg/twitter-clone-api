@@ -12,17 +12,50 @@ use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends Controller
 {
+    // public function profile(User $user)
+    // {
+
+    //     $authUser = Auth::user();
+    //     $authUserTweets = auth()->user()->tweets()->get();
+
+    //     try {
+    //         // return $authUser->with($authUserTweets)->get();
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'User Profile',
+    //             'status' => 200,
+    //             'authUser' => $authUser,
+    //             'authUserTweets' => $authUserTweets,
+    //         ]);
+    //     } catch (\Throwable $th) {
+    //         Log::error($th);
+    //         return response()->json([
+    //             'success' => false,
+    //             'status' => 500,
+    //             'message' => 'Oops! Something went wrong. Try Again!',
+    //         ]);
+    //     }
+    // }
+
     public function profile(User $user)
     {
 
+        $user = User::findOrFail($user);
+        // $user = User::with('tweets')->get();
+        // if ($user->tweets->count() > 0) {
+        //     return $user->tweets;
+        // }
+        // $userTweets = $user->with('tweets')->get();
         try {
-            return $user->get();
+            // return $user;
 
             return response()->json([
                 'success' => true,
                 'message' => 'User Profile',
                 'status' => 200,
                 'user' => $user,
+                // 'userTweets' => $userTweets,
             ]);
         } catch (\Throwable $th) {
             Log::error($th);

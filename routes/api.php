@@ -43,7 +43,7 @@ Route::middleware('auth:api')->group(function () {
     // logout
     Route::post('signout', [AuthController::class, 'logout']);
 
-    // logout
+    // authUser
     Route::get('authUser', [AuthController::class, 'getAuthUser']);
 
     // profile
@@ -51,6 +51,9 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/update-profile', [ProfileController::class, 'updateProfile']);
     Route::post('/update-profile-picture', [ProfileController::class, 'updateProfilePicture']);
     Route::post('/update-password', [ProfileController::class, 'updatePassword']);
+
+    // fetch authuser tweets
+    Route::get('/authUserTweets', [ProfileController::class, 'authUserTweets']);
 
 });
 Route::middleware('auth:api')->get('/user', function (Request $request) {

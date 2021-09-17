@@ -21,11 +21,15 @@ class TweetController extends Controller
     public function index()
     {
         $tweets = Tweet::with('tweep', 'replies')->latest()->get();
+        // DB::table('tweets')->orderBy('id')->chunk(10, function ($tweets) {
 
         if ($tweets->count() > 0) {
             return $tweets;
         }
         return 'No tweets found';
+        // return $tweets;
+        // });
+
     }
 
     /**
@@ -200,17 +204,43 @@ class TweetController extends Controller
         // dd($tweet->tweet_photo);
         try {
             if ($tweet->tweet_photo) {
-                unlink(public_path('/storage/tweets/photos/' . $tweet->tweet_photo));
+                unlink(public_path('tweets/photos/' . $tweet->tweet_photo));
                 // Storage::delete('/public/tweets/photos' . $tweet->tweet_photo);
             }
 
-            // $tweet->delete();
+            $tweet->delete();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Tweet Deleted',
                 'status' => 200,
                 'tweet_photo' => $tweet->tweet_photo,
+            ]);
+        } catch (\Throwable $th) {
+            Log::error($th);
+            return response()->json([
+                'success' => false,
+                'status' => 500,
+                'message' => 'Oops! Something went wrong. Try Again!',
+            ]);
+        }
+    }
+
+    public function authUserTweets()
+    {
+
+        // $authUser = Auth::user();
+        $authUserTweets = auth()->user()->tweets()->get();
+
+        try {
+            // return $authUser->with($authUserTweets)->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User Profile',
+                'status' => 200,
+                // 'authUser' => $authUser,
+                'authUserTweets' => $authUserTweets,
             ]);
         } catch (\Throwable $th) {
             Log::error($th);
