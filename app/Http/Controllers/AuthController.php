@@ -244,7 +244,9 @@ class AuthController extends Controller
     public function getAuthUser()
     {
         $authUser = Auth::user();
-        $authUserTweets = auth()->user()->tweets()->get();
+        $authUserTweets = auth()->user()->tweets()->latest()->get();
+        $tweeps = User::all()->except($authUser->id);
+        // $authUserTweetPhoto = auth()->user()->tweets->tweet_photo()->latest()->get();
         $authUserTweetsCount = auth()->user()->tweets()->count();
 
         try {
@@ -256,7 +258,9 @@ class AuthController extends Controller
                 'status' => 200,
                 'credentials' => $authUser,
                 'authUserTweets' => $authUserTweets,
+                // 'authUserTweetPhoto' => $authUserTweetPhoto,
                 'authUserTweetsCount' => $authUserTweetsCount,
+                'tweeps' => $tweeps,
             ]);
         } catch (\Throwable $th) {
             Log::error($th);
