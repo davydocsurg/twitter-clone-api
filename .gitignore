@@ -2,6 +2,7 @@
 /public/hot
 /public/storage
 /public/tweets
+/public/profile
 /storage/*.key
 /vendor
 .env

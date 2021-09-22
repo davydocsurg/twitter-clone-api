@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Intervention\Image\Facades\Image;
 
 class ProfileController extends Controller
 {
@@ -82,8 +83,20 @@ class ProfileController extends Controller
 
         $user = Auth::user();
 
-        $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
+        if ($request->first_name) {
+            $request->validate([
+                'first_name' => 'required|string|max:100',
+            ]);
+            $user->first_name = $request->first_name;
+        }
+
+        if ($request->last_name) {
+            $request->validate([
+                'last_name' => 'required|string|max:100',
+            ]);
+            $user->last_name = $request->last_name;
+        }
+
         if ($request->email) {
             $request->validate([
                 'email' => 'required|email|max:100|unique:users,email,' . $user->id,
@@ -101,7 +114,7 @@ class ProfileController extends Controller
 
         if ($request->bio) {
             $request->validate([
-                'bio' => 'required|string|min:4|max:255',
+                'bio' => 'required|string|min:4|max:455',
             ]);
             $user->bio = $request->bio;
         }
@@ -156,28 +169,34 @@ class ProfileController extends Controller
 
     public function updateProfilePicture(Request $request)
     {
-        $validateProfilePicture = $this->profile_picture_rules($request);
+        // $validateProfilePicture = $this->profile_picture_rules($request);
 
-        // Run validation
-        if ($validateProfilePicture->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validateProfilePicture->errors(),
-                'status' => 400,
-            ]);
-        }
+        // // Run validation
+        // if ($validateProfilePicture->fails()) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => $validateProfilePicture->errors(),
+        //         'status' => 400,
+        //     ]);
+        // }
 
         $user = Auth::user();
         $old = $user->profile_picture;
 
-        $uploadPhoto = Storage::put('/public/users/profile', $request->profile_picture);
+        // $uploadPhoto = Storage::put('/public/users/profile', $request->profile_picture);
 
-        $profilePicture = basename($uploadPhoto);
+        $uploadProfilePhoto = time() . '.' . explode('/', explode(':', substr($request->profile_picture, 0, strpos($request->profile_picture, ';')))[1])[1];
+        // dd($uploadPhoto);
+        // $validateProfilePhoto = $this->tweet_photo_rules($request);
+        Image::make($request->profile_picture)->save('profile/photos/' . $uploadProfilePhoto);
+        $request->merge(['profile_picture' => $uploadProfilePhoto]);
 
-        $user->profile_picture = $profilePicture;
+        // $profilePicture = basename($uploadProfilePhoto);
 
-        if (!$uploadPhoto) {
-            $profilePicture != 'avatar.png' ? Storage::delete('/public/users/profile/' . $profilePicture) : null;
+        $user->profile_picture = $uploadProfilePhoto;
+
+        if (!$uploadProfilePhoto) {
+            $uploadProfilePhoto != 'avatar.png' ? Storage::delete('/profile/photos/' . $uploadProfilePhoto) : null;
 
             return response()->json([
                 'success' => false,
@@ -188,7 +207,7 @@ class ProfileController extends Controller
 
         try {
             $user->save();
-            $old != 'avatar.png' ? unlink(public_path('/storage/users/profile/' . $old)) : null;
+            $old != 'avatar.png' ? unlink(public_path('/profile/photos/' . $old)) : null;
 
             return response()->json([
                 'success' => true,
