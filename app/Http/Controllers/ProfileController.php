@@ -224,6 +224,52 @@ class ProfileController extends Controller
             ]);
         }
     }
+
+    public function updateCoverPhoto(Request $request)
+    {
+
+        $user = Auth::user();
+        $old = $user->cover_picture;
+
+        $uploadCoverPhoto = time() . '.' . explode('/', explode(':', substr($request->cover_picture, 0, strpos($request->cover_picture, ';')))[1])[1];
+
+        Image::make($request->cover_picture)->save('profile/photos/' . $uploadCoverPhoto);
+        $request->merge(['cover_picture' => $uploadCoverPhoto]);
+
+        // $profilePicture = basename($uploadCoverPhoto);
+
+        $user->cover_picture = $uploadCoverPhoto;
+
+        if (!$uploadCoverPhoto) {
+            $uploadCoverPhoto != 'avatar.png' || 'hack.jpeg' ? Storage::delete('/profile/photos/' . $uploadCoverPhoto) : null;
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Oops! Something went wrong. Try Again!',
+                'status' => 400,
+            ]);
+        }
+
+        try {
+            $user->save();
+            $old != 'avatar.png' || 'hack.jpeg' ? unlink(public_path('/profile/photos/' . $old)) : null;
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Profile Updated',
+                'status' => 200,
+                'cover_picture' => $user->cover_picture,
+            ]);
+        } catch (\Throwable $th) {
+            Log::error($th);
+            return response()->json([
+                'success' => false,
+                'status' => 500,
+                'message' => 'Oops! Something went wrong. Try Again!',
+            ]);
+        }
+    }
+
     /**
      * Get a validator for an incoming request.
      *

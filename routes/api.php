@@ -50,6 +50,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/{handle}', [ProfileController::class, 'profile']);
     Route::post('/update-profile', [ProfileController::class, 'updateProfile']);
     Route::post('/update-profile-picture', [ProfileController::class, 'updateProfilePicture']);
+    Route::post('/update-cover-picture', [ProfileController::class, 'updateCoverPhoto']);
     Route::post('/update-password', [ProfileController::class, 'updatePassword']);
 
     // fetch authuser tweets
