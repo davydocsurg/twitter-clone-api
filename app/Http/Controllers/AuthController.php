@@ -244,7 +244,7 @@ class AuthController extends Controller
     public function getAuthUser()
     {
         $authUser = Auth::user();
-        $authUserTweets = auth()->user()->tweets()->latest()->get();
+        $authUserTweets = auth()->user()->tweets()->with('likes', 'replies')->latest()->get();
         $tweeps = User::all()->except($authUser->id);
         // $authUserTweetPhoto = auth()->user()->tweets->tweet_photo()->latest()->get();
         $authUserTweetsCount = auth()->user()->tweets()->count();

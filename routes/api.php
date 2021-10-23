@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\TweetController;
@@ -24,6 +25,7 @@ Route::post('signin', [AuthController::class, 'login'])->name('login');
 
 // Route::get('all/tweets', [TweetController::class, 'allTweets']);
 Route::get('tweets', [TweetController::class, 'index']);
+Route::get('tweets/likes', [LikeController::class, 'GetTweetLikes']);
 // protected routes
 // Route::group(['middleware' => ['auth:api']], function () {
 Route::middleware('auth:api')->group(function () {
@@ -55,6 +57,11 @@ Route::middleware('auth:api')->group(function () {
 
     // fetch authuser tweets
     Route::get('/authUserTweets', [ProfileController::class, 'authUserTweets']);
+
+    // like tweet
+    Route::get('tweets/{tweet}/like', [LikeController::class, 'likeTweet']);
+    // unlike tweet
+    Route::get('tweets/{tweet}/unlike', [LikeController::class, 'unlikeTweet']);
 
 });
 Route::middleware('auth:api')->get('/user', function (Request $request) {

@@ -16,9 +16,10 @@ class CreateLikesTable extends Migration
         Schema::create('likes', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('likeable_id');
-            $table->string('likeable_type')->index()->nullable();
-            $table->enum('type', ['like', 'unlike'])->default('like');
+            $table->unsignedBigInteger('tweet_id');
+            $table->unsignedBigInteger('like_count')->default(0);
+            // $table->string('likeable_type')->index()->nullable();
+            // $table->enum('type', ['like', 'unlike'])->default('like');
             $table->timestamps();
         });
     }

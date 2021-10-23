@@ -20,7 +20,8 @@ class TweetController extends Controller
      */
     public function index()
     {
-        $tweets = Tweet::with('tweep', 'replies')->latest()->get();
+        $tweets = Tweet::with('tweep', 'likes', 'replies')->latest()->get();
+        // $tweets_with_likes = Tweet::with('tweep', 'likes', 'replies')->latest()->get();
         // DB::table('tweets')->orderBy('id')->chunk(10, function ($tweets) {
 
         if ($tweets->count() > 0) {
@@ -159,10 +160,10 @@ class TweetController extends Controller
     public function showTweet(Tweet $tweet)
     {
         // $tweet = Tweet::findOrFail($tweet);
-        if ($tweet->has('replies')) {
+        if ($tweet->has('likes', 'replies')) {
             // $tweet = Tweet::with('tweep', 'replies')->get();
-            return $tweet->replies;
-            // return $tweet;
+            // return $tweet->replies;
+            return $tweet->with('likes', 'replies');
 
         }
 

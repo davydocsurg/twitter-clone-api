@@ -58,4 +58,9 @@ class User extends Authenticatable
     {
         return 'handle';
     }
+
+    public function like()
+    {
+        return $this->hasOne(Like::class);
+    }
 }
