@@ -14,8 +14,13 @@ class Like extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function tweet()
+    // public function tweet()
+    // {
+    //     return $this->belongsTo(Tweet::class);
+    // }
+
+    public function tweets()
     {
-        return $this->belongsTo(Tweet::class);
+        return $this->hasMany(Tweet::class);
     }
 }

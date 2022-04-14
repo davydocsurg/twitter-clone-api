@@ -17,6 +17,7 @@ class CreateLikesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('tweet_id');
+            $table->string('tweet_slug');
             $table->unsignedBigInteger('like_count')->default(0);
             // $table->string('likeable_type')->index()->nullable();
             // $table->enum('type', ['like', 'unlike'])->default('like');

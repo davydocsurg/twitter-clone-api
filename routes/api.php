@@ -33,7 +33,7 @@ Route::middleware('auth:api')->group(function () {
     // tweet routes
 
     Route::post('tweet/create', [TweetController::class, 'createTweet']);
-    Route::get('tweets/{tweet}/show', [TweetController::class, 'showTweet']);
+    Route::get('tweet/{tweet}', [TweetController::class, 'showTweet']);
     Route::post('tweets/{tweet}/destroy', [TweetController::class, 'destroy']);
 
     // reply routes

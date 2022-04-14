@@ -22,6 +22,7 @@ class LikeController extends Controller
         $like = new Like();
         $like->user_id = Auth::user()->id;
         $like->tweet_id = $tweet->id;
+        $like->tweet_slug = $tweet->slug;
 
         $like->like_count += 1;
 
@@ -37,7 +38,7 @@ class LikeController extends Controller
                 'status' => 200,
                 'like' => $like,
             ]);
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             Log::error($th);
             return response()->json([
                 'success' => false,
@@ -47,13 +48,17 @@ class LikeController extends Controller
         }
     }
 
-    public function unlikeTweet(Request $request, User $user, Tweet $tweet, Like $like)
+    public function unlikeTweet(Like $like, Tweet $tweet)
     {
         // $unlikeTweet = $tweet->tweep->like();
         // dd($unlikeTweet);
+        $like = Like::findOrFail($tweet->id);
+        // $liked = Like::where($like->tweet_id, $tweet->id);
 
         try {
-            $tweet->tweep->like()->delete();
+            // $tweet->tweep->like()->delete();
+            // $liked->delete();
+            $like->like_count - 1;
 
             return response()->json([
                 'success' => true,
@@ -61,7 +66,7 @@ class LikeController extends Controller
                 'status' => 200,
                 'like' => $like,
             ]);
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             Log::error($th);
             return response()->json([
                 'success' => false,

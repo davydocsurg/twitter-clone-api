@@ -58,7 +58,7 @@ class ProfileController extends Controller
                 'user' => $user,
                 // 'userTweets' => $userTweets,
             ]);
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             Log::error($th);
             return response()->json([
                 'success' => false,
@@ -85,28 +85,28 @@ class ProfileController extends Controller
 
         if ($request->first_name) {
             $request->validate([
-                'first_name' => 'required|string|max:100',
+                'first_name' => 'string|max:100',
             ]);
             $user->first_name = $request->first_name;
         }
 
         if ($request->last_name) {
             $request->validate([
-                'last_name' => 'required|string|max:100',
+                'last_name' => 'string|max:100',
             ]);
             $user->last_name = $request->last_name;
         }
 
         if ($request->email) {
             $request->validate([
-                'email' => 'required|email|max:100|unique:users,email,' . $user->id,
+                'email' => 'email|max:100|unique:users,email,' . $user->id,
             ]);
             $user->email = $request->email;
         }
 
         if ($request->handle) {
             $request->validate([
-                'handle' => 'required|string|min:4|max:15|unique:users,handle,' . $user->id,
+                'handle' => 'string|min:4|max:15|unique:users,handle,' . $user->id,
             ]);
 
             $user->handle = $request->handle;
@@ -114,14 +114,14 @@ class ProfileController extends Controller
 
         if ($request->bio) {
             $request->validate([
-                'bio' => 'required|string|min:4|max:455',
+                'bio' => 'string|min:4|max:455',
             ]);
             $user->bio = $request->bio;
         }
 
         if ($request->website) {
             $request->validate([
-                'website' => 'required|url|min:4|max:255',
+                'website' => 'url|min:4|max:255',
             ]);
 
             $user->website = $request->website;
@@ -130,7 +130,7 @@ class ProfileController extends Controller
 
         if ($request->location) {
             $request->validate([
-                'location' => 'required|string|min:4|max:255',
+                'location' => 'string|min:4|max:255',
             ]);
             $user->location = $request->location;
         }
@@ -144,7 +144,7 @@ class ProfileController extends Controller
                 'status' => 200,
                 'user' => $user,
             ]);
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             Log::error($th);
             return response()->json([
                 'success' => false,
@@ -215,7 +215,7 @@ class ProfileController extends Controller
                 'status' => 200,
                 'profile_picture' => $user->profile_picture,
             ]);
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             Log::error($th);
             return response()->json([
                 'success' => false,
@@ -260,7 +260,7 @@ class ProfileController extends Controller
                 'status' => 200,
                 'cover_picture' => $user->cover_picture,
             ]);
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             Log::error($th);
             return response()->json([
                 'success' => false,

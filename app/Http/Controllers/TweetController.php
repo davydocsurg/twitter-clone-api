@@ -114,7 +114,7 @@ class TweetController extends Controller
                 'tweet' => $tweet,
                 // 'access_token' => $token,
             ]);
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             Log::error($th);
             return response()->json([
                 'success' => false,
@@ -157,17 +157,18 @@ class TweetController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function showTweet(Tweet $tweet)
+    public function showTweet(Request $req, $tweet)
     {
-        // $tweet = Tweet::findOrFail($tweet);
-        if ($tweet->has('likes', 'replies')) {
+        // $tweetDeatails = Tweet::findOrFail($tweet);
+        // dd($tweet);
+        $data = Tweet::where('slug', $tweet)->first();
+        if ($data->has('likes', 'replies')) {
             // $tweet = Tweet::with('tweep', 'replies')->get();
             // return $tweet->replies;
-            return $tweet->with('likes', 'replies');
+            return $data->with('likes', 'replies')->first();
 
         }
-
-        return $tweet;
+        return $data;
 
     }
 
@@ -217,7 +218,7 @@ class TweetController extends Controller
                 'status' => 200,
                 'tweet_photo' => $tweet->tweet_photo,
             ]);
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             Log::error($th);
             return response()->json([
                 'success' => false,
@@ -243,7 +244,7 @@ class TweetController extends Controller
                 // 'authUser' => $authUser,
                 'authUserTweets' => $authUserTweets,
             ]);
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             Log::error($th);
             return response()->json([
                 'success' => false,

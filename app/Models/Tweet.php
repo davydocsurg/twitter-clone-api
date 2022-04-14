@@ -17,6 +17,10 @@ class Tweet extends Model
         'tweet_video',
     ];
 
+    protected $with = [
+        'tweep',
+    ];
+
     public function tweep()
     {
         return $this->belongsTo(User::class, 'user_id');
