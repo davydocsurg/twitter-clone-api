@@ -33,14 +33,14 @@ Route::middleware('auth:api')->group(function () {
     // tweet routes
 
     Route::post('tweet/create', [TweetController::class, 'createTweet']);
-    Route::get('tweet/{tweet}', [TweetController::class, 'showTweet']);
-    Route::post('tweets/{tweet}/destroy', [TweetController::class, 'destroy']);
+    Route::get('tweet/show/{tweet}', [TweetController::class, 'showTweet']);
+    Route::post('tweets/destroy/{tweet}', [TweetController::class, 'destroy']);
 
     // reply routes
     Route::get('replies', [ReplyController::class, 'index']);
     Route::post('reply/{tweet}', [ReplyController::class, 'replyTweet']);
-    Route::get('reply/{id}/show', [ReplyController::class, 'show']);
-    Route::post('reply/{id}/destroy', [ReplyController::class, 'destroy']);
+    Route::get('reply/show/{id}', [ReplyController::class, 'show']);
+    Route::post('reply/destroy/{id}', [ReplyController::class, 'destroy']);
 
     // logout
     Route::post('signout', [AuthController::class, 'logout']);
@@ -59,9 +59,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/authUserTweets', [ProfileController::class, 'authUserTweets']);
 
     // like tweet
-    Route::get('tweets/{tweet}/like', [LikeController::class, 'likeTweet']);
+    Route::get('like/{tweet}', [LikeController::class, 'likeTweet']);
     // unlike tweet
-    Route::get('tweets/{tweet}/unlike', [LikeController::class, 'unlikeTweet']);
+    Route::get('unlike/{tweet}', [LikeController::class, 'unlikeTweet']);
 
 });
 Route::middleware('auth:api')->get('/user', function (Request $request) {
