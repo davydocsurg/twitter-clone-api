@@ -83,7 +83,7 @@ class AuthController extends Controller
                 'user' => $user,
                 'access_token' => $token,
             ]);
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             $profilePicture != 'avatar.png' ? Storage::delete('/public/users/profile/' . $profilePicture) : null;
             Log::error($th);
             return response()->json([
@@ -140,22 +140,21 @@ class AuthController extends Controller
             ]);
         }
 
-        $login = $request->login;
-        $password = $request->password;
+        try {
 
-        $attempt = false;
+            $login = $request->login;
+            $password = $request->password;
 
-        // Attempt login with email
-        $attempt = Auth::attempt(['email' => $login, 'password' => $password], $request->remember_me);
+            $attempt = false;
 
-        // Attempt login with handle
-        $attempt = $attempt ? $attempt : Auth::attempt(['handle' => $login, 'password' => $password], $request->remember_me);
+            // Attempt login with email
+            $attempt = Auth::attempt(['email' => $login, 'password' => $password], $request->remember_me);
 
-        // create token for user
-        $token = Auth::user()->createToken('authToken')->accessToken;
+            // Attempt login with handle
+            $attempt = $attempt ? $attempt : Auth::attempt(['handle' => $login, 'password' => $password], $request->remember_me);
 
-        // Return response
-        if ($attempt) {
+            // create token for user
+            $token = Auth::user()->createToken('authToken')->accessToken;
 
             return response()->json([
                 'success' => true,
@@ -164,7 +163,8 @@ class AuthController extends Controller
                 'user' => $login,
                 'access_token' => $token,
             ]);
-        } else {
+
+        } catch (\Throwable$th) {
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid Credentials',
@@ -210,7 +210,7 @@ class AuthController extends Controller
                 'status' => 200,
 
             ]);
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             Log::error($th);
             return response()->json([
                 'success' => false,
@@ -262,7 +262,7 @@ class AuthController extends Controller
                 'authUserTweetsCount' => $authUserTweetsCount,
                 'tweeps' => $tweeps,
             ]);
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             Log::error($th);
             return response()->json([
                 'success' => false,
