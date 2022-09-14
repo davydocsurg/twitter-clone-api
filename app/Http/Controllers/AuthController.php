@@ -140,37 +140,27 @@ class AuthController extends Controller
             ]);
         }
 
-        try {
+        $login = $request->login;
+        $password = $request->password;
 
-            $login = $request->login;
-            $password = $request->password;
+        $attempt = false;
 
-            $attempt = false;
+        // Attempt login with email
+        $attempt = Auth::attempt(['email' => $login, 'password' => $password], $request->remember_me);
 
-            // Attempt login with email
-            $attempt = Auth::attempt(['email' => $login, 'password' => $password], $request->remember_me);
+        // Attempt login with handle
+        $attempt = $attempt ? $attempt : Auth::attempt(['handle' => $login, 'password' => $password], $request->remember_me);
 
-            // Attempt login with handle
-            $attempt = $attempt ? $attempt : Auth::attempt(['handle' => $login, 'password' => $password], $request->remember_me);
+        // create token for user
+        $token = Auth::user()->createToken('authToken')->accessToken;
 
-            // create token for user
-            $token = Auth::user()->createToken('authToken')->accessToken;
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Login Successful',
-                'status' => 200,
-                'user' => $login,
-                'access_token' => $token,
-            ]);
-
-        } catch (\Throwable$th) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid Credentials',
-                'status' => 400,
-            ]);
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Login Successful',
+            'status' => 200,
+            'user' => $login,
+            'access_token' => $token,
+        ]);
 
     }
 

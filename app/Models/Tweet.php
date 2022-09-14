@@ -40,4 +40,9 @@ class Tweet extends Model
     {
         return 'slug';
     }
+
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
 }

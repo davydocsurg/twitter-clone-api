@@ -3,8 +3,9 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ReplyController;
-use App\Http\Controllers\TweetController;
+use App\Http\Controllers\Tweet\CrudController;
+use App\Http\Controllers\Tweet\ReplyController;
+use App\Http\Controllers\Tweet\TweetController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,9 +33,9 @@ Route::middleware('auth:api')->group(function () {
     // Route::apiResources(['tweets' => TweetController::class]);
     // tweet routes
 
-    Route::post('tweet/create', [TweetController::class, 'createTweet']);
+    Route::post('tweet/create', [CrudController::class, 'create']);
     Route::get('tweet/show/{tweet}', [TweetController::class, 'showTweet']);
-    Route::post('tweets/destroy/{tweet}', [TweetController::class, 'destroy']);
+    Route::post('tweets/destroy/{tweet}', [CrudController::class, 'destroy']);
 
     // reply routes
     Route::get('replies', [ReplyController::class, 'index']);
