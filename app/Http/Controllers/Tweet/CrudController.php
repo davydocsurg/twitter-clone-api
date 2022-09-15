@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Tweet;
 use App\Http\Controllers\Controller;
 use App\Models\Image;
 use App\Models\Tweet;
+use App\Models\Video;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -67,8 +69,6 @@ class CrudController extends Controller
         $tweet->slug = Str::slug(time() . '-' . substr($request->tweet_text, 0, 3));
 
         if ($request->tweet_photo) {
-            // $uploadPhoto = time() . '.' . explode('/', explode(':', substr($request->tweet_photo, 0, strpos($request->tweet_photo, ';')))[1])[1];
-            // dd($uploadPhoto);
             $validateTweetPhoto = $this->tweet_photo_rules($request);
 
             // Run validation
@@ -78,24 +78,43 @@ class CrudController extends Controller
                     'message' => $validateTweetPhoto->errors(),
                     'status' => 400,
                 ]);
+            } else {
+                $tweetPhoto = $request->tweet_photo;
+
+                $path = $tweetPhoto->store('tweets/photos', 'public');
+
+                Image::create([
+                    'url' => $path,
+                    'imageable_id' => $tweet->slug,
+                    'imageable_type' => 'App\Models\Tweet',
+                ]);
             }
 
-            $tweetPhoto = $request->tweet_photo;
+        }
 
-            $path = $tweetPhoto->store('tweets/photos', 'public');
+        if ($request->tweet_video) {
+            $validateTweetVideo = $this->tweet_video_rules($request);
 
-            Image::create([
-                'url' => $path,
-                'imageable_id' => $tweet->id,
-                'imageable_type' => 'App\Models\Tweet',
-            ]);
+            // Run validation
+            if ($validateTweetVideo->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validateTweetVideo->errors(),
+                    'status' => 400,
+                ]);
+            } else {
+                $tweetVideo = $request->tweet_video;
 
-            // Image::make($request->tweet_photo)->save('tweets/photos/' . $uploadPhoto);
+                $path = $tweetVideo->store('tweets/videos', 'public');
 
-            // $request->merge(['tweet_photo' => $uploadPhoto]);
-
-            // $tweet->tweet_photo = $uploadPhoto;
-
+                Video::create([
+                    'url' => $path,
+                    'videoable_id' => $tweet->slug,
+                    'videoable_type' => 'App\Models\Tweet',
+                ]);
+            }
+        } else {
+            # code...
         }
 
         $tweet->save();
@@ -112,6 +131,20 @@ class CrudController extends Controller
         // Make and return validation rules
         return Validator::make($request->all(), [
             'tweet_photo' => 'required|mimes:jpg,jpeg,png,bmp|max:4000',
+        ]);
+    }
+
+    /**
+     * Get a validator for an incoming request.
+     *
+     * @param  request  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    public function tweet_video_rules(Request $request)
+    {
+        // Make and return validation rules
+        return Validator::make($request->all(), [
+            'tweet_video' => 'required|mimes:mp4|max:10000',
         ]);
     }
 

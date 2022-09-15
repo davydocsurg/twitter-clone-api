@@ -45,4 +45,9 @@ class Tweet extends Model
     {
         return $this->morphMany(Image::class, 'imageable');
     }
+
+    public function videos()
+    {
+        return $this->morphMany(Video::class, 'videoable');
+    }
 }

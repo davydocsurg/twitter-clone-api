@@ -36,7 +36,7 @@ class TweetController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function showTweet(Request $req, $tweet)
+    public function showTweet($tweet)
     {
         // $tweetDeatails = Tweet::findOrFail($tweet);
         // dd($tweet);
