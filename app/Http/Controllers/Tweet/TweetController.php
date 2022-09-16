@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Tweet;
 
+use App\Http\Controllers\Controller;
 use App\Models\Tweet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,16 +18,13 @@ class TweetController extends Controller
      */
     public function index()
     {
-        $tweets = Tweet::with('tweep', 'likes', 'replies')->latest()->get();
-        // $tweets_with_likes = Tweet::with('tweep', 'likes', 'replies')->latest()->get();
-        // DB::table('tweets')->orderBy('id')->chunk(10, function ($tweets) {
+        $tweets = Tweet::latest()->get();
 
         if ($tweets->count() > 0) {
+            // dd($tweets->images());
             return $tweets;
         }
         return 'No tweets found';
-        // return $tweets;
-        // });
 
     }
 

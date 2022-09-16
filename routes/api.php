@@ -24,7 +24,6 @@ use Illuminate\Support\Facades\Route;
 Route::post('signup', [AuthController::class, 'signUp']);
 Route::post('signin', [AuthController::class, 'login'])->name('login');
 
-// Route::get('all/tweets', [TweetController::class, 'allTweets']);
 Route::get('tweets', [TweetController::class, 'index']);
 Route::get('tweets/likes', [LikeController::class, 'GetTweetLikes']);
 // protected routes

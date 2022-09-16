@@ -113,8 +113,6 @@ class CrudController extends Controller
                     'videoable_type' => 'App\Models\Tweet',
                 ]);
             }
-        } else {
-            # code...
         }
 
         $tweet->save();

@@ -18,7 +18,7 @@ class Tweet extends Model
     ];
 
     protected $with = [
-        'tweep',
+        'tweep', 'images', 'likes', 'replies',
     ];
 
     public function tweep()
@@ -29,11 +29,6 @@ class Tweet extends Model
     public function replies()
     {
         return $this->hasMany(Reply::class);
-    }
-
-    public function likes()
-    {
-        return $this->hasMany(Like::class);
     }
 
     public function getRouteKeyName()
@@ -49,5 +44,10 @@ class Tweet extends Model
     public function videos()
     {
         return $this->morphMany(Video::class, 'videoable');
+    }
+
+    public function likes()
+    {
+        return $this->morphMany(Like::class, 'likeable');
     }
 }

@@ -9,6 +9,12 @@ class Like extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'likeable_id',
+        'likeable_type',
+        'type',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -22,5 +28,10 @@ class Like extends Model
     public function tweets()
     {
         return $this->hasMany(Tweet::class);
+    }
+
+    public function likeable()
+    {
+        return $this->morphto();
     }
 }

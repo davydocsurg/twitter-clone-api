@@ -17,10 +17,10 @@ class CreateLikesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('tweet_id');
+            $table->unsignedBigInteger('likeable_id')->default(0);
             $table->string('tweet_slug');
-            $table->unsignedBigInteger('like_count')->default(0);
-            // $table->string('likeable_type')->index()->nullable();
-            // $table->enum('type', ['like', 'unlike'])->default('like');
+            $table->enum('likeable_type', ['tweet', 'reply']);
+            $table->enum('type', ['like', 'unlike'])->default('like');
             $table->timestamps();
         });
     }
