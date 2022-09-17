@@ -15,6 +15,7 @@ class Tweet extends Model
         'tweet_text',
         'tweet_photo',
         'tweet_video',
+        'slug',
     ];
 
     protected $with = [

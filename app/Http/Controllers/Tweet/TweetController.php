@@ -21,7 +21,6 @@ class TweetController extends Controller
         $tweets = Tweet::latest()->get();
 
         if ($tweets->count() > 0) {
-            // dd($tweets->images());
             return $tweets;
         }
         return 'No tweets found';

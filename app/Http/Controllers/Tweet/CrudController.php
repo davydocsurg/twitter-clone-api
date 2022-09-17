@@ -33,7 +33,12 @@ class CrudController extends Controller
             ]);
         }
 
-        $tweet = new Tweet();
+        $tweet = Tweet::create([
+            'slug' => Str::slug(time() . '-' . substr($request->tweet_text, 0, 3)),
+            'user_id' => Auth::user()->id,
+            'tweet_text' => $request->tweet_text,
+        ]);
+        // $tweet->slug = Str::slug(time() . '-' . substr($request->tweet_text, 0, 3));
 
         $this->store($request, $tweet);
 
@@ -64,9 +69,6 @@ class CrudController extends Controller
      */
     public function store($request, $tweet)
     {
-        $tweet->user_id = Auth::user()->id;
-        $tweet->tweet_text = $request->tweet_text;
-        $tweet->slug = Str::slug(time() . '-' . substr($request->tweet_text, 0, 3));
 
         if ($request->tweet_photo) {
             $validateTweetPhoto = $this->tweet_photo_rules($request);
@@ -85,7 +87,7 @@ class CrudController extends Controller
 
                 Image::create([
                     'url' => $path,
-                    'imageable_id' => $tweet->slug,
+                    'imageable_id' => $tweet->id,
                     'imageable_type' => 'App\Models\Tweet',
                 ]);
             }
@@ -109,7 +111,7 @@ class CrudController extends Controller
 
                 Video::create([
                     'url' => $path,
-                    'videoable_id' => $tweet->slug,
+                    'videoable_id' => $tweet->id,
                     'videoable_type' => 'App\Models\Tweet',
                 ]);
             }
